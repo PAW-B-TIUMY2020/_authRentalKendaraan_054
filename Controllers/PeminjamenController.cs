@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,8 @@ namespace RentalKendaraan.Controllers
         {
             _context = context;
         }
+
+        [Authorize(Policy = "readonlypolicy")]
 
         // GET: Peminjamen
         public async Task<IActionResult> Index(string ktsd, string searchString, string currentFilter, int? pageNumber, string sortOrder)
@@ -100,13 +103,14 @@ namespace RentalKendaraan.Controllers
 
             return View(peminjaman);
         }
+        [Authorize(Policy = "writepolicy")]
 
         // GET: Peminjamen/Create
         public IActionResult Create()
         {
-            ViewData["IdCustomer"] = new SelectList(_context.Customer, "IdCustomer", "IdCustomer");
-            ViewData["IdJaminan"] = new SelectList(_context.Jaminan, "IdJaminan", "IdJaminan");
-            ViewData["IdKendaraan"] = new SelectList(_context.Kendaraan, "IdKendaraan", "IdKendaraan");
+            ViewData["IdCustomer"] = new SelectList(_context.Customer, "IdCustomer", "NamaCustomer");
+            ViewData["IdJaminan"] = new SelectList(_context.Jaminan, "IdJaminan", "NamaJaminan");
+            ViewData["IdKendaraan"] = new SelectList(_context.Kendaraan, "IdKendaraan", "NamaKendaraan");
             return View();
         }
 
@@ -128,6 +132,8 @@ namespace RentalKendaraan.Controllers
             ViewData["IdKendaraan"] = new SelectList(_context.Kendaraan, "IdKendaraan", "IdKendaraan", peminjaman.IdKendaraan);
             return View(peminjaman);
         }
+
+        [Authorize(Policy = "editpolicy")]
 
         // GET: Peminjamen/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -185,6 +191,8 @@ namespace RentalKendaraan.Controllers
             ViewData["IdKendaraan"] = new SelectList(_context.Kendaraan, "IdKendaraan", "IdKendaraan", peminjaman.IdKendaraan);
             return View(peminjaman);
         }
+
+        [Authorize(Policy = "deletepolicy")]
 
         // GET: Peminjamen/Delete/5
         public async Task<IActionResult> Delete(int? id)
